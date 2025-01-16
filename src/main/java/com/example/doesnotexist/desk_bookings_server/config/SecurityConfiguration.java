@@ -4,16 +4,13 @@ import com.example.doesnotexist.desk_bookings_server.services.MongoUserDetailsSe
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.HttpStatusEntryPoint;
+import org.springframework.security.web.authentication.Http403ForbiddenEntryPoint;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -26,7 +23,9 @@ import java.util.List;
 @Slf4j
 public class SecurityConfiguration {
     @Bean
-    SecurityFilterChain securityWebFilterChain(HttpSecurity http) throws Exception {
+    SecurityFilterChain securityWebFilterChain(HttpSecurity http,
+                                               MongoUserDetailsService mongoUserDetailsService
+    ) throws Exception {
         return http.cors(Customizer.withDefaults())
                 .authorizeHttpRequests(a -> {
                     a.requestMatchers("/").permitAll();
@@ -35,21 +34,12 @@ public class SecurityConfiguration {
                     a.requestMatchers("/api-docs/**").permitAll();
                     a.anyRequest().authenticated();
                 })
+                .userDetailsService(mongoUserDetailsService)
                 .csrf(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
                 .logout(AbstractHttpConfigurer::disable)
-                .exceptionHandling(eh -> eh.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
+                .exceptionHandling(eh -> eh.authenticationEntryPoint(new Http403ForbiddenEntryPoint()))
                 .httpBasic(Customizer.withDefaults()).build();
-    }
-
-    @Bean
-    public AuthenticationManager customAuthenticationManager(HttpSecurity http,
-                                                             MongoUserDetailsService userDetailsService,
-                                                             PasswordEncoder passwordEncoder) throws Exception {
-        AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
-        authenticationManagerBuilder.userDetailsService(userDetailsService)
-                .passwordEncoder(passwordEncoder);
-        return authenticationManagerBuilder.build();
     }
 
     @Bean
