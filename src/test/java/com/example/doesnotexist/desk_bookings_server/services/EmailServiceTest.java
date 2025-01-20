@@ -1,6 +1,6 @@
 package com.example.doesnotexist.desk_bookings_server.services;
 
-import com.example.doesnotexist.desk_bookings_server.config.SecretKeyProperties;
+import com.example.doesnotexist.desk_bookings_server.config.SendGridProperties;
 import com.example.doesnotexist.desk_bookings_server.dto.SenderIdentityDto;
 import com.example.doesnotexist.desk_bookings_server.model.Booking;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,11 +28,11 @@ class EmailServiceTest {
     private SendEmailService sendEmailService;
     private SendGrid sendGridMock;
     @Autowired
-    private SecretKeyProperties secretKeyProperties;
+    private SendGridProperties secretKeyProperties;
 
     @Test
     void testSecretKeyProperties() {
-        assertEquals("test-api-key", secretKeyProperties.value());
+        assertEquals("test-api-key", secretKeyProperties.getKey());
     }
 
     @BeforeEach
