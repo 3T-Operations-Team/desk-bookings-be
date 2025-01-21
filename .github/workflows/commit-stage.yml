@@ -51,9 +51,7 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            # branch event
             type=sha
-            # tag event
             type=schedule
 
       - name: Build and push Docker image
