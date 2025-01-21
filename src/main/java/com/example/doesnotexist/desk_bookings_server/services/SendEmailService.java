@@ -4,11 +4,11 @@ import com.example.doesnotexist.desk_bookings_server.dto.SenderIdentityDto;
 import com.sendgrid.helpers.mail.Mail;
 import com.sendgrid.helpers.mail.objects.Content;
 import com.sendgrid.helpers.mail.objects.Email;
-import org.apache.logging.log4j.util.Strings;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import com.example.doesnotexist.desk_bookings_server.config.SendGridProperties;
 import com.sendgrid.*;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.io.IOException;
@@ -23,10 +23,10 @@ public class SendEmailService {
 
     public SendEmailService(SendGridProperties sendGridProperties) {
         this.sendGridClient = new SendGrid(sendGridProperties.getKey());
-        if (!Strings.isBlank(sendGridProperties.getHost())) {
+        if (!StringUtils.hasText(sendGridProperties.getHost())) {
             this.sendGridClient.setHost(sendGridProperties.getHost());
         }
-        if (!Strings.isBlank(sendGridProperties.getVersion())) {
+        if (!StringUtils.hasText(sendGridProperties.getVersion())) {
             this.sendGridClient.setVersion(sendGridProperties.getVersion());
         }
         getSenderList();
