@@ -6,8 +6,9 @@ import com.sendgrid.helpers.mail.objects.Content;
 import com.sendgrid.helpers.mail.objects.Email;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import com.example.doesnotexist.desk_bookings_server.config.SecretKeyProperties;
+import com.example.doesnotexist.desk_bookings_server.config.SendGridProperties;
 import com.sendgrid.*;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.io.IOException;
@@ -20,8 +21,14 @@ public class SendEmailService {
     private final SendGrid sendGridClient;
     private List<SenderIdentityDto> senderList = new ArrayList<>();
 
-    public SendEmailService(SecretKeyProperties secKeyProperties) {
-        this.sendGridClient = new SendGrid(secKeyProperties.value());
+    public SendEmailService(SendGridProperties sendGridProperties) {
+        this.sendGridClient = new SendGrid(sendGridProperties.getKey());
+        if (!StringUtils.hasText(sendGridProperties.getHost())) {
+            this.sendGridClient.setHost(sendGridProperties.getHost());
+        }
+        if (!StringUtils.hasText(sendGridProperties.getVersion())) {
+            this.sendGridClient.setVersion(sendGridProperties.getVersion());
+        }
         getSenderList();
     }
 

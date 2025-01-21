@@ -17,6 +17,8 @@ EXPOSE 8080
 
 # Essential vars to override
 ENV SENDGRID_KEY="yourkey"
+ENV SENDGRID_HOST="api.sendgrid.com"
+ENV SENDGRID_VERSION="v3"
 ENV MONGO_URL="mongodb://yourhost:port/"
 ENV MONGO_DBNAME="cicd"
 
