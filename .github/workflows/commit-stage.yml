@@ -1,4 +1,4 @@
-name: Commit Backend pipeline
+name: Commit Stage (Backend)
 
 on:
   push:
